@@ -1,0 +1,53 @@
+{
+	"name": "hofff/json-ld",
+	"description": "JSON-LD tooling for Symfony",
+	"keywords": [
+		"json-ld",
+		"symfony",
+		"serializer",
+		"bundle"
+	],
+	"type": "library",
+	"license": "LGPL-3.0+",
+	"homepage": "http://hofff.com/",
+	"authors": [
+		{
+			"name": "Oliver Hoff",
+			"email": "oliver@hofff.com"
+		}
+	],
+	"require": {
+		"php": "^7.1",
+		"doctrine/annotations": "^1.5",
+		"ml/json-ld": "^1.0",
+		"psr/cache": "^1.0",
+		"symfony/serializer": "^3.3",
+		"symfony/property-access": "^3.3",
+		"symfony/property-info": "^3.3"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.0"
+	},
+	"suggest": {
+		"symfony/framework-bundle": "An integration bundle is provided"
+	},
+	"autoload": {
+		"psr-4": { "Hofff\\JsonLd\\": "src/" }
+	},
+	"autoload-dev": {
+		"psr-4": { "Hofff\\JsonLd\\Test\\": "test/" }
+	},
+	"scripts": {
+		"test": "phpunit"
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"preferred-install": "dist",
+		"platform": {
+			"php": "7.1"
+		}
+	},
+	"extra": {
+	}
+}
