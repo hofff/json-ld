@@ -12,7 +12,7 @@ namespace Hofff\JsonLd\Annotation;
 final class Type
 {
     /**
-     * @var string|null The node type of objects serialized from this class instances
+     * @var string The node type of objects serialized from this class instances
      */
     public $iri;
 }
