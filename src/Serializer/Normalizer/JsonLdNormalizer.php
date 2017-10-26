@@ -197,11 +197,11 @@ class JsonLdNormalizer extends AbstractNormalizer implements NormalizerAwareInte
             return $object;
         }
 
-        $metadata = $this->metadataProvider->getMetadataFor($thing);
-
-        if($this->isMaxDepthReached($metadata, $context)) {
+        if($this->isMaxDepthReached($context)) {
             return $object;
         }
+
+        $metadata = $this->metadataProvider->getMetadataFor($thing);
 
         if($types = $metadata->getTypes()) {
             $object['@type'] = $types;
@@ -221,11 +221,10 @@ class JsonLdNormalizer extends AbstractNormalizer implements NormalizerAwareInte
     }
 
     /**
-     * @param Metadata $metadata
      * @param array $context
      * @return bool
      */
-    private function isMaxDepthReached(Metadata $metadata, array &$context): bool
+    private function isMaxDepthReached(array &$context): bool
     {
         if(empty($context[self::KEY_ENABLE_MAX_DEPTH])) {
             return false;
@@ -235,7 +234,7 @@ class JsonLdNormalizer extends AbstractNormalizer implements NormalizerAwareInte
             return false;
         }
 
-        $class = $metadata->getClass();
+        $class = $currentProperty->getClass();
         $propertyName = $currentProperty->getName();
         $attributesMetadata = $this->classMetadataFactory->getMetadataFor($class)->getAttributesMetadata();
         if (!isset($attributesMetadata[$propertyName])) {

@@ -173,6 +173,7 @@ class MetadataBuilder
                 }
 
                 $property = new SerializableProperty();
+                $property->class = $class;
                 $property->name = $propertyName;
                 $property->accessor = $propertyName;
                 $property->mutator = $propertyName;

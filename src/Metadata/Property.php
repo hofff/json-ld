@@ -12,6 +12,11 @@ interface Property
     /**
      * @return string
      */
+    public function getClass(): string;
+
+    /**
+     * @return string
+     */
     public function getName(): string;
 
     /**

@@ -16,6 +16,13 @@ class SerializableProperty implements Property
      *
      * @var string
      */
+    public $class;
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
     public $name;
 
     /**
@@ -52,6 +59,14 @@ class SerializableProperty implements Property
      * @var string|null
      */
     public $type;
+
+    /**
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return $this->class;
+    }
 
     /**
      * @return string
