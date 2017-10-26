@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hofff\JsonLd\Test\Serializer\Normalizer\JsonLdNormalizer;
+namespace Hofff\JsonLd\Test\Functional\Serializer\Normalizer\JsonLdNormalizer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Hofff\JsonLd\Catalog\ArrayCatalog;
