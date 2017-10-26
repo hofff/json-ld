@@ -6,6 +6,7 @@ namespace Hofff\JsonLd\Metadata\Builder;
 
 use Hofff\JsonLd\Exception\InvalidMetadataConfiguration;
 use Hofff\JsonLd\Metadata\Property;
+use Hofff\JsonLd\Exception\InvalidArgument;
 
 /**
  * @author Oliver Hoff <oliver@hofff.com>
@@ -23,12 +24,12 @@ class PropertyBuilder
     private $name;
 
     /**
-     * @var string|null
+     * @var string|bool|null
      */
     private $accessor;
 
     /**
-     * @var string|null
+     * @var string|bool|null
      */
     private $mutator;
 
@@ -71,43 +72,27 @@ class PropertyBuilder
     }
 
     /**
-     * @return string|null
+     * @param string|bool|null $accessor
      */
-    public function getAccessor(): ?string
+    public function setAccessor($accessor): void
     {
-        return $this->accessor;
-    }
+        if(!is_string($accessor) && !is_bool($accessor) && !is_null($accessor)) {
+            throw new InvalidArgument();
+        }
 
-    /**
-     * @param string|null $accessor
-     */
-    public function setAccessor(?string $accessor): void
-    {
         $this->accessor = $accessor;
     }
 
     /**
-     * @return string|null
+     * @param string|bool|null $mutator
      */
-    public function getMutator(): ?string
+    public function setMutator($mutator): void
     {
-        return $this->mutator;
-    }
+        if(!is_string($mutator) && !is_bool($mutator) && !is_null($mutator)) {
+            throw new InvalidArgument();
+        }
 
-    /**
-     * @param string|null $mutator
-     */
-    public function setMutator(?string $mutator): void
-    {
         $this->mutator = $mutator;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getIri(): ?string
-    {
-        return $this->iri;
     }
 
     /**
@@ -119,14 +104,6 @@ class PropertyBuilder
     }
 
     /**
-     * @return string|null
-     */
-    public function getTerm(): ?string
-    {
-        return $this->term;
-    }
-
-    /**
      * @param string|null $term
      */
     public function setTerm(?string $term): void
@@ -135,27 +112,11 @@ class PropertyBuilder
     }
 
     /**
-     * @return string|null
-     */
-    public function getVocab(): ?string
-    {
-        return $this->vocab;
-    }
-
-    /**
      * @param string $iri
      */
     public function setVocab(?string $iri): void
     {
         $this->vocab = $iri;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getType(): ?string
-    {
-        return $this->type;
     }
 
     /**
@@ -171,34 +132,41 @@ class PropertyBuilder
      */
     public function build(): Property
     {
-        $property = new SerializableProperty();
-
-        if(null === $this->name) {
+        if($this->accessor === false && $this->mutator === false) {
             throw new InvalidMetadataConfiguration();
         }
 
+        $property = new SerializableProperty();
+
+        $property->class = $this->metadataBuilder->getReflectionClass()->getName();
         $property->name = $this->name;
-        $property->accessor = $this->accessor ?? $this->name;
-        $property->mutator = $this->mutator ?? $this->name;
+        $property->accessor = $this->accessor !== false ? is_string($this->accessor) ? $this->accessor : $this->name : null;
+        $property->mutator = $this->mutator !== false ? is_string($this->mutator) ? $this->mutator : $this->name : null;
         $property->term = $this->term ?? $this->name;
         $property->type = $this->type;
-
         $property->iri = $this->resolveIri();
 
         return $property;
     }
 
-    private function resolveIri(MetadataBuilder $builder): string
+    /**
+     * @throws InvalidMetadataConfiguration
+     * @return string
+     */
+    private function resolveIri(): string
     {
-
-        if($this->vocab !== null) {
-            return $this->vocab.$this->name;
-        }
-
-        if(null !== $vocab = $builder->getVocab()) {
+        if(null !== $vocab = $this->resolveVocab()) {
             return $vocab.$this->name;
         }
 
         throw new InvalidMetadataConfiguration();
+    }
+
+    /**
+     * @return string|null
+     */
+    private function resolveVocab(): ?string
+    {
+        return $this->vocab ?? $this->metadataBuilder->resolveVocab();
     }
 }

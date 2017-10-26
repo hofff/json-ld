@@ -22,12 +22,12 @@ interface Property
     /**
      * @return string
      */
-    public function getAccessor(): string;
+    public function getAccessor(): ?string;
 
     /**
      * @return string
      */
-    public function getMutator(): string;
+    public function getMutator(): ?string;
 
     /**
      * @return string

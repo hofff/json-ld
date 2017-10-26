@@ -12,6 +12,7 @@ use Hofff\JsonLd\Annotation\Vocab;
 use Hofff\JsonLd\Exception\InvalidMetadataConfiguration;
 use Hofff\JsonLd\Metadata\Builder\MetadataBuilder;
 use Hofff\JsonLd\Metadata\Builder\PropertyBuilder;
+use Hofff\JsonLd\Exception\InvalidArgument;
 
 /**
  * @author Oliver Hoff <oliver@hofff.com>
@@ -48,8 +49,11 @@ class AnnotationLoader implements Loader
      */
     public function load(MetadataBuilder $builder): bool
     {
-        return $this->loadClassAnnotations($builder)
-            || $this->loadPropertyAnnotations($builder);
+        $loaded = false;
+        $loaded = $this->loadClassAnnotations($builder) || $loaded;
+        $loaded = $this->loadPropertyAnnotations($builder) || $loaded;
+
+        return $loaded;
     }
 
     /**
@@ -65,6 +69,17 @@ class AnnotationLoader implements Loader
             $this->reader->getClassAnnotations($reflClass),
             self::CLASS_ANNOTATIONS
         );
+
+        foreach($classAnnotations[Property::class] ?? [] as $property) {
+            /* @var Property $property */
+            if($property->name === null) {
+                throw new InvalidMetadataConfiguration();
+            }
+
+            $this->configurePropertyBuilder($builder->getPropertyBuilder($property->name), $property);
+
+            $loaded = true;
+        }
 
         foreach($classAnnotations[Term::class] ?? [] as $term) {
             /* @var Term $term */
@@ -83,17 +98,6 @@ class AnnotationLoader implements Loader
         foreach($classAnnotations[Vocab::class] ?? [] as $vocab) {
             /* @var Vocab $vocab */
             $builder->setVocab($vocab->iri);
-
-            $loaded = true;
-        }
-
-        foreach($classAnnotations[Property::class] ?? [] as $property) {
-            /* @var Property $property */
-            if($property->name === null) {
-                throw new InvalidMetadataConfiguration();
-            }
-
-            $this->configurePropertyBuilder($builder->getPropertyBuilder($property->name), $property);
 
             $loaded = true;
         }
@@ -143,11 +147,15 @@ class AnnotationLoader implements Loader
      */
     private function configurePropertyBuilder(PropertyBuilder $builder, Property $property): void
     {
-        $builder->setAccessor($property->accessor);
-        $builder->setMutator($property->mutator);
-        $builder->setIri($property->iri);
-        $builder->setTerm($property->term);
-        $builder->setType($property->type);
+        try {
+            $builder->setAccessor($property->accessor);
+            $builder->setMutator($property->mutator);
+            $builder->setIri($property->iri);
+            $builder->setTerm($property->term);
+            $builder->setType($property->type);
+        } catch(InvalidArgument $e) {
+            throw new InvalidMetadataConfiguration($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**

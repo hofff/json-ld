@@ -161,7 +161,11 @@ class MetadataBuilder
             $metadata->types[] = $type;
         }
 
-        if($this->vocab !== null) {
+        foreach($this->propertyBuilders as $builder) {
+            $metadata->properties[$builder->getName()] = $builder->build();
+        }
+
+        if(null !== $vocab = $this->resolveVocab()) {
             foreach ($this->reflClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $reflProperty) {
                 /* @var \ReflectionProperty $reflProperty */
                 $propertyName = $reflProperty->getName();
@@ -177,7 +181,7 @@ class MetadataBuilder
                 $property->name = $propertyName;
                 $property->accessor = $propertyName;
                 $property->mutator = $propertyName;
-                $property->iri = $this->vocab.$propertyName;
+                $property->iri = $vocab.$propertyName;
                 $property->term = $propertyName;
 
                 $metadata->properties[$propertyName] = $property;
@@ -185,5 +189,13 @@ class MetadataBuilder
         }
 
         return $metadata;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function resolveVocab(): ?string
+    {
+        return $this->vocab;
     }
 }

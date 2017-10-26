@@ -263,6 +263,10 @@ class JsonLdNormalizer extends AbstractNormalizer implements NormalizerAwareInte
         $class = $metadata->getClass();
         $properties = $metadata->getProperties();
 
+        $properties = array_filter($properties, function(Property $property) {
+            return null !== $property->getAccessor();
+        });
+
         if(false !== $allowedAttributes = $this->getAllowedAttributes($class, $context, true)) {
             $allowedAttributes = array_flip($allowedAttributes);
             $properties = array_filter($properties, function(Property $property) use($allowedAttributes) {

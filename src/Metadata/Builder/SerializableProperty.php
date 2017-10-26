@@ -28,14 +28,14 @@ class SerializableProperty implements Property
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $accessor;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $mutator;
 
@@ -77,17 +77,17 @@ class SerializableProperty implements Property
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAccessor(): string
+    public function getAccessor(): ?string
     {
         return $this->accessor;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMutator(): string
+    public function getMutator(): ?string
     {
         return $this->mutator;
     }
