@@ -236,13 +236,13 @@ class JsonLdNormalizer extends AbstractNormalizer implements NormalizerAwareInte
         }
 
         $class = $metadata->getClass();
-        $property = $property->getName();
+        $propertyName = $currentProperty->getName();
         $attributesMetadata = $this->classMetadataFactory->getMetadataFor($class)->getAttributesMetadata();
-        if (!isset($attributesMetadata[$property])) {
+        if (!isset($attributesMetadata[$propertyName])) {
             return false;
         }
 
-        if(null === $maxDepth = $attributesMetadata[$property]->getMaxDepth()) {
+        if(null === $maxDepth = $attributesMetadata[$propertyName]->getMaxDepth()) {
             return false;
         }
 
