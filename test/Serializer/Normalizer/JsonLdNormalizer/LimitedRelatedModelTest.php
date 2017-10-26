@@ -78,6 +78,40 @@ class LimitedRelatedModelTest extends AbstractFunctionalTest
         self::assertSame($normalized, $objects);
     }
 
+    public function testParentDisabledMaxDepth(): void
+    {
+        $context = [];
+        $context[JsonLdNormalizer::KEY_ENABLE_MAX_DEPTH] = false;
+
+        $objects = $this->normalizer->normalize($this->parent, null, $context);
+
+        $normalized = [
+            [
+                '@id' => 'https://example.com/limited-related-model/parent',
+                'https://example.com/limited-related-model#related' => [
+                    [
+                        '@id' => 'https://example.com/limited-related-model/child',
+                        'https://example.com/limited-related-model#related' => [
+                            [
+                                '@id' => 'https://example.com/limited-related-model/grandchild',
+                                'https://example.com/limited-related-model#related' => [
+                                    [
+                                        '@id' => 'https://example.com/limited-related-model/greatgrandchild',
+                                        'https://example.com/limited-related-model#related' => [
+                                            ['@value' => null],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        self::assertSame($normalized, $objects);
+    }
+
     public function testChild(): void
     {
         $context = [];
